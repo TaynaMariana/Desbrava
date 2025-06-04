@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        Int     @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  foto      String?
+  conquistas Conquista[]
+  feedbacks Feedback[]
+  visitas    Visita[]
+}
+
+model PontoTuristico {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  descricao      String
+  latitude       Float
+  longitude      Float
+  categoria      String
+  acessibilidade Boolean
+  fotos          String
+  feedbacks      Feedback[]
+  visitas        Visita[]
+}
+
+model Feedback {
+  id        Int    @id @default(autoincrement())
+  texto     String
+  estrelas  Int
+  tipo      String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  ponto     PontoTuristico @relation(fields: [pontoId], references: [id])
+  pontoId   Int
+}
+
+model Visita {
+  id        Int      @id @default(autoincrement())
+  data      DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  ponto     PontoTuristico @relation(fields: [pontoId], references: [id])
+  pontoId   Int
+}
+
+model Conquista {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  data      DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+}
